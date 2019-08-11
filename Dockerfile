@@ -32,6 +32,20 @@ RUN apk update && \
 
 # Final container
 FROM alpine:3.9 as final
+
+# Install extra fonts
+RUN apk add --no-cache msttcorefonts-installer fontconfig
+RUN update-ms-fonts
+RUN apk add --no-cache \
+    msttcorefonts-installer fontconfig \
+    font-noto \
+    font-noto-thai \
+    terminus-font \
+    ttf-opensans \
+    font-misc-misc \
+    font-croscore
+RUN fc-cache -f && rm -rf /var/cache/*
+
 # Copy youtube-dl binary and manpage into container from builder container
 COPY --from=builder_ytdl /usr/local/bin/youtube-dl /usr/local/bin/youtube-dl
 COPY --from=builder_ytdl /usr/local/man/man1/youtube-dl.1 /usr/local/man/man1/youtube-dl.1
